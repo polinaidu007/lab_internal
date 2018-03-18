@@ -1,5 +1,10 @@
 <?php
 include "connect.php";
+session_start();
+if(!(isset($_SESSION['user']) )){
+    #echo $_SESSION["user"];
+    header("location:login.php");
+}
 if(isset($_POST["sub"])){
 $u=$_POST["headline"];
 $e=$_POST["main"];
@@ -15,16 +20,23 @@ else
 }
 if(isset($_POST["s"]))
 {
-	$file = addslashes(file_get_contents($_FILES["image"]));  
-    $query = "INSERT INTO img VALUES ($file)";
-    if(mysqli_query($conn,$query))
+    $fileName=$_FILES["image"]["name"];
+    echo $fileName;
+    $fileTemp=$_FILES["image"]["tmp_name"];
+    $file_ext= strtolower(pathinfo($fileName,PATHINFO_EXTENSION));  
+    if(move_uploaded_file($fileTemp,"images/".$fileName))
     {
-    	echo "inserted img";
-    }  
+        echo "upload successfull";
+    }
+    $qr="insert into filestorage(fileType,fileName) values('$file_ext','$fileName')";
+    if(mysqli_query($conn,$qr))
+    {
+        echo "inserted file successfully";
+    }
     else
     {
-    	echo "cannot insert img";
-	}
+        echo "file insertion failed";
+    }
 }
 ?>
 
@@ -42,5 +54,6 @@ if(isset($_POST["s"]))
 	 <input type="file" name="image" id="image" /> 
 	 <input type="submit" name="s">
 </form>
+<a href="logout.php">Logout</a>
 </body>
 </html>

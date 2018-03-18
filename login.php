@@ -9,7 +9,10 @@ $qr="select * from authentication where email='$e' and password='$p' and job='$j
 $res=mysqli_query($conn,$qr);
 $res=mysqli_fetch_object($res);
 if($res)
-{	
+{
+	session_start();
+	$_SESSION['user']='poli';
+	echo $_SESSION['user'];
 	header("location:adminLogin.php");
 }
 else
